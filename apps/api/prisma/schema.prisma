@@ -1,0 +1,121 @@
+// ==========================
+// Prisma Client Generator
+// ==========================
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+// ==========================
+// Database connection
+// (Prisma 7: لا نضع url هنا)
+// ==========================
+datasource db {
+  provider = "postgresql"
+}
+
+// ==========================
+// Enums
+// ==========================
+enum UserRole {
+  ADMIN
+  REP
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  WON
+  LOST
+}
+
+// ==========================
+// User Model
+// ==========================
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  role      UserRole
+  createdAt DateTime @default(now())
+
+  // Relations
+  leads     Lead[]
+  visits    Visit[]
+
+}
+
+// ==========================
+// Lead Model
+// ==========================
+model Lead {
+  id           String     @id @default(cuid())
+
+  // Business info
+  businessName String
+  sector       String
+  city         String
+  area         String
+  addressLine  String
+
+  // Primary contact
+  primaryName  String
+  primaryPhone String
+  primaryEmail String?
+
+  // Status
+  status       LeadStatus @default(NEW)
+
+  // Ownership (relation)
+  ownerUserId  String
+  ownerUser    User       @relation(fields: [ownerUserId], references: [id])
+
+  // Timestamps
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Indexes (performance)
+  @@index([ownerUserId, status])
+  @@index([city, area])
+  @@index([primaryPhone])
+
+  // Relations
+  visits      Visit[]
+
+}
+
+
+// ==========================
+// Visit Model
+// ==========================
+
+model Visit {
+  id        String   @id @default(cuid())
+
+  leadId    String
+  repUserId String
+
+  checkInAt DateTime?
+  checkInLat Float?
+  checkInLng Float?
+  checkOutAt DateTime?
+  checkOutLat Float?
+  checkOutLng Float?
+  durationMinutes Int?
+
+  outcomeResult String? // مثال: SUCCESS / NOT_REACHED / REFUSED
+  refusalReason String?
+
+  formData  Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lead   Lead @relation(fields: [leadId], references: [id])
+  repUser User @relation(fields: [repUserId], references: [id])
+
+  @@index([leadId, repUserId])
+  @@index([checkInAt])
+}
+

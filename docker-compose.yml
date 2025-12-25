@@ -1,0 +1,9 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${CRM_DB_USER}
+      POSTGRES_PASSWORD: ${CRM_DB_PASS}
+      POSTGRES_DB: ${CRM_DB_NAME}
+    ports:
+      - "5432:5432"
