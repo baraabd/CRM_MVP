@@ -87,7 +87,7 @@ model Lead {
 
 
 // ==========================
-// Visit Model
+// Model Visit
 // ==========================
 
 model Visit {
