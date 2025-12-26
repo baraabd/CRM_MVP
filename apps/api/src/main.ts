@@ -4,7 +4,6 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { PrismaExceptionFilter } from './prisma/prisma-exception.filter';
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -27,16 +26,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  await app.listen(3000);
-   
+  const port = Number(process.env.API_PORT ?? 3000);
+  await app.listen(port, '0.0.0.0');
+
   console.log('Listening on', await app.getUrl());
 }
 
-// Handle promise properly for lint rules
-void bootstrap();
-
-bootstrap().catch((err) => {
-   
+void bootstrap().catch((err) => {
   console.error(err);
   process.exit(1);
 });
