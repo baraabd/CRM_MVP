@@ -5,38 +5,43 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import type { Response } from 'express';
+
+interface PrismaErrorBody {
+  statusCode: number;
+  message: string;
+  code: string;
+  meta?: Prisma.PrismaClientKnownRequestError['meta'];
+}
 
 @Catch(Prisma.PrismaClientKnownRequestError)
 export class PrismaExceptionFilter implements ExceptionFilter {
   catch(exception: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
-    const res = ctx.getResponse();
+    const res = ctx.getResponse<Response>();
 
-    // Unique constraint (مثلاً email unique)
+    let status = HttpStatus.BAD_REQUEST;
+    let message = exception.message;
+
+    // Unique constraint (e.g. email unique)
     if (exception.code === 'P2002') {
-      return res.status(HttpStatus.CONFLICT).json({
-        statusCode: HttpStatus.CONFLICT,
-        message: 'Resource already exists (unique constraint).',
-        code: exception.code,
-        meta: exception.meta,
-      });
+      status = HttpStatus.CONFLICT;
+      message = 'Resource already exists (unique constraint).';
     }
 
     // Not found on update/delete
     if (exception.code === 'P2025') {
-      return res.status(HttpStatus.NOT_FOUND).json({
-        statusCode: HttpStatus.NOT_FOUND,
-        message: 'Resource not found.',
-        code: exception.code,
-        meta: exception.meta,
-      });
+      status = HttpStatus.NOT_FOUND;
+      message = 'Resource not found.';
     }
 
-    return res.status(HttpStatus.BAD_REQUEST).json({
-      statusCode: HttpStatus.BAD_REQUEST,
-      message: exception.message,
+    const body: PrismaErrorBody = {
+      statusCode: status,
+      message,
       code: exception.code,
       meta: exception.meta,
-    });
+    };
+
+    return res.status(status).json(body);
   }
 }

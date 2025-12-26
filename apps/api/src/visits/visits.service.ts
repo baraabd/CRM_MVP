@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateVisitDto } from './dto/create-visit.dto';
+import { Prisma } from '@prisma/client';
+
 
 @Injectable()
 export class VisitsService {
@@ -20,7 +22,7 @@ export class VisitsService {
         durationMinutes: dto.durationMinutes,
         outcomeResult: dto.outcomeResult,
         refusalReason: dto.refusalReason,
-        formData: dto.formData ?? {},
+        formData: dto.formData ?? Prisma.JsonNull,
       },
       include: { lead: true, repUser: true },
     });

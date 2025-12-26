@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNumber, IsOptional, IsString, IsObject } from 'class-validator';
+import { Prisma } from '@prisma/client';
+import {
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsObject,
+} from 'class-validator';
 
 export class CreateVisitDto {
   @ApiProperty({ example: 'LEAD_ID' })
@@ -56,11 +63,12 @@ export class CreateVisitDto {
   refusalReason?: string;
 
   @ApiProperty({
-    description: 'Full dynamic form payload',
-    example: { hasGBP: false, hasWebsite: false, notes: 'Customer needs photos' }
+    description: 'Full dynamic form payload (must be valid JSON)',
+    required: false,
+    example: { hasGBP: false, hasWebsite: false, notes: 'Customer needs photos' },
+    type: Object,
   })
-  
-@IsOptional()
-@IsObject()
-  formData!: Record<string, any>;
+  @IsOptional()
+  @IsObject()
+  formData?: Prisma.InputJsonValue;
 }

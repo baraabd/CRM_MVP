@@ -26,10 +26,17 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  console.log('DATABASE_URL=', process.env.DATABASE_URL);
 
   await app.listen(3000);
-    console.log('Listening on', await app.getUrl());
-
+   
+  console.log('Listening on', await app.getUrl());
 }
-bootstrap();
+
+// Handle promise properly for lint rules
+void bootstrap();
+
+bootstrap().catch((err) => {
+   
+  console.error(err);
+  process.exit(1);
+});
