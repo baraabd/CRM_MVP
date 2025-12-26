@@ -1,26 +1,25 @@
-# ---- Base image ----
 FROM node:20-alpine
-
-# ---- Set working directory ----
 WORKDIR /app
 
-# ---- Copy package files ----
+# 1) Copy package files first
 COPY package*.json ./
 
-# ---- Install dependencies ----
+# 2) Copy prisma folder BEFORE npm ci (because postinstall runs prisma generate)
+COPY prisma ./prisma
+# If you use prisma.config.ts, also copy it:
+COPY prisma.config.ts ./
+
+# 3) Install deps (postinstall can now find schema)
 RUN npm ci
 
-# ---- Copy source code ----
+# 4) Copy the rest
 COPY . .
 
-# ---- Generate Prisma client ----
+# 5) Ensure prisma client is generated (safe even if postinstall already did it)
 RUN npx prisma generate
 
-# ---- Build NestJS app ----
+# 6) Build Nest
 RUN npm run build
 
-# ---- Expose port ----
 EXPOSE 3000
-
-# ---- Start app ----
 CMD ["node", "dist/main.js"]
