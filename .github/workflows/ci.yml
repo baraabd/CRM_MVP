@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-test-build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+          - name: api
+            path: apps/api
+          - name: crm-mobile
+            path: apps/crm-mobile
+
+    defaults:
+      run:
+        working-directory: ${{ matrix.app.path }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            apps/api/package-lock.json
+            apps/crm-mobile/package-lock.json
+
+      - name: Install deps
+        run: npm ci
+
+      # Lint (only if script exists)
+      - name: Lint
+        run: npm run lint --if-present
+
+      # Typecheck (only if script exists)
+      - name: Typecheck
+        run: npm run typecheck --if-present
+
+      # Tests (only if script exists)
+      - name: Test
+        run: npm test --if-present
+
+      # Build (only if script exists)
+      - name: Build
+        run: npm run build --if-present
