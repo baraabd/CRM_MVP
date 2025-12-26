@@ -7,13 +7,13 @@ export class CreateUserDto {
   @ApiProperty({ example: 'Baraa' })
   @IsString()
   @MinLength(2)
-  name: string;
+  name!: string;
 
   @ApiProperty({ example: 'baraa@example.com' })
   @IsEmail()
-  email: string;
+  email!: string;
 
   @ApiProperty({ enum: UserRoleDto, example: UserRoleDto.REP })
   @IsEnum(UserRoleDto)
-  role: UserRoleDto;
+  role!: UserRoleDto;
 }

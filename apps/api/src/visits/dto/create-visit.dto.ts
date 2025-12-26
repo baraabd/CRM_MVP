@@ -4,11 +4,11 @@ import { IsInt, IsNumber, IsOptional, IsString, IsObject } from 'class-validator
 export class CreateVisitDto {
   @ApiProperty({ example: 'LEAD_ID' })
   @IsString()
-  leadId: string;
+  leadId!: string;
 
   @ApiProperty({ example: 'USER_ID' })
   @IsString()
-  repUserId: string;
+  repUserId!: string;
 
   @ApiProperty({ example: '2025-12-25T10:00:00.000Z', required: false })
   @IsOptional()
@@ -62,5 +62,5 @@ export class CreateVisitDto {
   
 @IsOptional()
 @IsObject()
-  formData: Record<string, any>;
+  formData!: Record<string, any>;
 }

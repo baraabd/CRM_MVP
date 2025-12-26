@@ -42,6 +42,11 @@ jobs:
       - name: Install deps
         run: npm ci
 
+      - name: Prisma generate (api only)
+        if: ${{ matrix.app.name == 'api' }}
+        run: npx prisma generate
+
+
       - name: Lint (non-blocking)
         run: npm run lint --if-present
         continue-on-error: true

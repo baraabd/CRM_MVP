@@ -3,17 +3,17 @@ import { UserRoleDto } from './user-role.dto';
 
 export class UserResponseDto {
   @ApiProperty()
-  id: string;
+  id!: string;
 
   @ApiProperty()
-  name: string;
+  name!: string;
 
   @ApiProperty()
-  email: string;
+  email!: string;
 
   @ApiProperty({ enum: UserRoleDto })
-  role: UserRoleDto;
+  role!: UserRoleDto;
 
   @ApiProperty()
-  createdAt: Date;
+  createdAt!: Date;
 }
