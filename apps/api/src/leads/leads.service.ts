@@ -1,12 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import type { Lead, User } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
+
+type LeadWithOwner = Lead & { ownerUser: User | null };
 
 @Injectable()
 export class LeadsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(dto: CreateLeadDto) {
+  async create(dto: CreateLeadDto): Promise<Lead> {
     return this.prisma.lead.create({
       data: {
         businessName: dto.businessName,
@@ -22,14 +25,14 @@ export class LeadsService {
     });
   }
 
-  findAll() {
+  async findAll(): Promise<LeadWithOwner[]> {
     return this.prisma.lead.findMany({
       orderBy: { updatedAt: 'desc' },
       include: { ownerUser: true },
     });
   }
 
-  findOne(id: string) {
+  async findOne(id: string): Promise<LeadWithOwner | null> {
     return this.prisma.lead.findUnique({
       where: { id },
       include: { ownerUser: true },
