@@ -21,10 +21,20 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.baraabdullatif.crmmobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d7a1850b-ee13-4d6a-b937-7406dda5f0b6"
+      }
+    },
+    "owner": "baraabdullatif",
+    "plugins": [
+      "expo-sqlite"
+    ]
   }
 }
