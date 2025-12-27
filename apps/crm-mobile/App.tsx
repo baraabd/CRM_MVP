@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, FlatList, Text, View, ActivityIndicator, RefreshControl } from 'react-native';
-import { fetchLeads, Lead } from '../api/src/api/leads';
+import {
+  SafeAreaView,
+  FlatList,
+  Text,
+  View,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
+
+import { fetchLeads } from './src/api/leads';
+import type { Lead } from './src/types/lead';
 
 export default function App() {
   const [data, setData] = useState<Lead[]>([]);
@@ -26,6 +35,7 @@ export default function App() {
 
   async function onRefresh() {
     setRefreshing(true);
+    setError(null);
     try {
       const leads = await fetchLeads();
       setData(leads);
@@ -53,7 +63,9 @@ export default function App() {
         <View style={{ padding: 10, borderWidth: 1, borderRadius: 8, marginBottom: 10 }}>
           <Text style={{ fontWeight: '700' }}>Error</Text>
           <Text>{error}</Text>
-          <Text style={{ marginTop: 6 }}>Tip: make sure API is running on http://localhost:3000</Text>
+          <Text style={{ marginTop: 6 }}>
+            Tip: On real Android phone use your PC IP (same Wi-Fi), not localhost.
+          </Text>
         </View>
       ) : null}
 
@@ -65,8 +77,12 @@ export default function App() {
         renderItem={({ item }) => (
           <View style={{ borderWidth: 1, borderRadius: 10, padding: 12 }}>
             <Text style={{ fontSize: 16, fontWeight: '700' }}>{item.businessName}</Text>
-            <Text>{item.city} - {item.area}</Text>
-            <Text>{item.primaryName} • {item.primaryPhone}</Text>
+            <Text>
+              {item.city} - {item.area}
+            </Text>
+            <Text>
+              {item.primaryName} • {item.primaryPhone}
+            </Text>
             <Text style={{ marginTop: 6, fontWeight: '700' }}>{item.status}</Text>
           </View>
         )}
